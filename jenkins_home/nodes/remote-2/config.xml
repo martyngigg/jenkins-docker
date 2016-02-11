@@ -1,0 +1,16 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<org.jenkinci.plugins.mock__slave.MockSlave plugin="mock-slave@1.8">
+  <name>remote-2</name>
+  <description></description>
+  <remoteFS>/var/jenkins_home/mock-slaves/remote-2</remoteFS>
+  <numExecutors>1</numExecutors>
+  <mode>NORMAL</mode>
+  <retentionStrategy class="hudson.slaves.RetentionStrategy$Always"/>
+  <launcher class="org.jenkinci.plugins.mock_slave.MockSlaveLauncher">
+    <latency>0</latency>
+    <bandwidth>0</bandwidth>
+  </launcher>
+  <label>rhel7</label>
+  <nodeProperties/>
+  <userId>anonymous</userId>
+</org.jenkinci.plugins.mock__slave.MockSlave>

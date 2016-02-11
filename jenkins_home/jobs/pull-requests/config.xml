@@ -1,0 +1,38 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<flow-definition plugin="workflow-job@1.13">
+  <actions/>
+  <description></description>
+  <keepDependencies>false</keepDependencies>
+  <properties>
+    <hudson.model.ParametersDefinitionProperty>
+      <parameterDefinitions>
+        <hudson.model.StringParameterDefinition>
+          <name>GITHUB_URL</name>
+          <description></description>
+          <defaultValue>https://github.com/mantidproject/mantid/pull/1</defaultValue>
+        </hudson.model.StringParameterDefinition>
+      </parameterDefinitions>
+    </hudson.model.ParametersDefinitionProperty>
+  </properties>
+  <definition class="org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition" plugin="workflow-cps@1.13">
+    <script>echo &quot;Starting checks for pull request &apos;$GITHUB_URL&apos;&quot;
+
+echo &quot;Running static checks...&quot;
+
+def result = parallel(clangformat: {
+    build job: &apos;clang-format&apos;, parameters: [[$class: &apos;StringParameterValue&apos;, name: &apos;GITHUB_URL&apos;, value: GITHUB_URL]], wait: true
+}
+, doxygen: {
+    build job: &apos;cppcheck&apos;, parameters: [[$class: &apos;StringParameterValue&apos;, name: &apos;GITHUB_URL&apos;, value: GITHUB_URL]], wait: true
+}, cppcheck: {
+    build job: &apos;doxygen&apos;, parameters: [[$class: &apos;StringParameterValue&apos;, name: &apos;GITHUB_URL&apos;, value: GITHUB_URL]], wait: true
+},
+failFast: false)
+
+
+echo &quot;Completed static checks. Proceding to compilation &amp; testing&quot;</script>
+    <sandbox>false</sandbox>
+  </definition>
+  <triggers/>
+  <concurrentBuild>false</concurrentBuild>
+</flow-definition>
