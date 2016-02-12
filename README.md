@@ -13,4 +13,4 @@ Run it with:
 docker run --rm -p 8080:8080 -ti jenkins-docker
 ```
 
-and Jenkins should be available at http://localhost:8080
+and Jenkins should be available at http://localhost:8080.
