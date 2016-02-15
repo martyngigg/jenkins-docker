@@ -19,7 +19,7 @@
     </hudson.model.ParametersDefinitionProperty>
   </properties>
   <definition class="org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition" plugin="workflow-cps@1.13">
-    <script>echo &quot;Starting checks for pull request&apos;&quot;
+    <script>echo &quot;Starting checks for pull request &apos;$GITHUB_URL&apos;&quot;
 
 echo &quot;Running static checks...&quot;
 
@@ -44,7 +44,7 @@ echo &quot;Completed static checks. Proceding to compilation &amp; testing&quot;
       <events>
         <org.jenkinsci.plugins.github.pullrequest.events.impl.GitHubPROpenEvent/>
       </events>
-      <preStatus>true</preStatus>
+      <preStatus>false</preStatus>
       <cancelQueued>false</cancelQueued>
       <skipFirstRun>false</skipFirstRun>
     </org.jenkinsci.plugins.github.pullrequest.GitHubPRTrigger>
