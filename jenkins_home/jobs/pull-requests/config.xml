@@ -8,30 +8,41 @@
       <projectUrl>https://github.com/martyngigg/jenkins-github-pr/</projectUrl>
       <displayName></displayName>
     </com.coravy.hudson.plugins.github.GithubProjectProperty>
-    <hudson.model.ParametersDefinitionProperty>
-      <parameterDefinitions>
-        <hudson.model.StringParameterDefinition>
-          <name>GITHUB_URL</name>
-          <description></description>
-          <defaultValue>https://github.com/martyngigg/jenkins-github-pr/pulls/1</defaultValue>
-        </hudson.model.StringParameterDefinition>
-      </parameterDefinitions>
-    </hudson.model.ParametersDefinitionProperty>
   </properties>
   <definition class="org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition" plugin="workflow-cps@1.13">
-    <script>echo &quot;Starting checks for pull request &apos;$GITHUB_URL&apos;&quot;
+    <script>echo &quot;Starting checks for pull request &quot;
+
+def buildParams = [
+    [$class: &apos;StringParameterValue&apos;, name: &apos;GITHUB_PR_TRIGGER_SENDER_AUTHOR&apos;, value: GITHUB_PR_TRIGGER_SENDER_AUTHOR],
+    [$class: &apos;StringParameterValue&apos;, name: &apos;GITHUB_PR_TRIGGER_SENDER_EMAIL&apos;, value: GITHUB_PR_TRIGGER_SENDER_EMAIL],
+    [$class: &apos;StringParameterValue&apos;, name: &apos;GITHUB_PR_COMMIT_AUTHOR_NAME&apos;, value: GITHUB_PR_COMMIT_AUTHOR_NAME],
+    [$class: &apos;StringParameterValue&apos;, name: &apos;GITHUB_PR_COMMIT_AUTHOR_EMAIL&apos;, value: GITHUB_PR_COMMIT_AUTHOR_EMAIL],
+    [$class: &apos;StringParameterValue&apos;, name: &apos;GITHUB_PR_TARGET_BRANCH&apos;, value: GITHUB_PR_TARGET_BRANCH],
+    [$class: &apos;StringParameterValue&apos;, name: &apos;GITHUB_PR_SOURCE_BRANCH&apos;, value: GITHUB_PR_SOURCE_BRANCH],
+    [$class: &apos;StringParameterValue&apos;, name: &apos;GITHUB_PR_AUTHOR_EMAIL&apos;, value: GITHUB_PR_AUTHOR_EMAIL],
+    [$class: &apos;StringParameterValue&apos;, name: &apos;GITHUB_PR_SHORT_DESC&apos;, value: GITHUB_PR_SHORT_DESC],
+    [$class: &apos;StringParameterValue&apos;, name: &apos;GITHUB_PR_TITLE&apos;, value: GITHUB_PR_TITLE],
+    [$class: &apos;StringParameterValue&apos;, name: &apos;GITHUB_PR_URL&apos;, value: GITHUB_PR_URL],
+    [$class: &apos;StringParameterValue&apos;, name: &apos;GITHUB_PR_SOURCE_REPO_OWNER&apos;, value: GITHUB_PR_SOURCE_REPO_OWNER],
+    [$class: &apos;StringParameterValue&apos;, name: &apos;GITHUB_PR_HEAD_SHA&apos;, value: GITHUB_PR_HEAD_SHA],
+    [$class: &apos;StringParameterValue&apos;, name: &apos;GITHUB_PR_COND_REF&apos;, value: GITHUB_PR_COND_REF],
+    [$class: &apos;BooleanParameterValue&apos;, name: &apos;GITHUB_PR_CAUSE_SKIP&apos;, value: GITHUB_PR_CAUSE_SKIP.toBoolean()],
+    [$class: &apos;StringParameterValue&apos;, name: &apos;GITHUB_PR_NUMBER&apos;, value: GITHUB_PR_NUMBER],
+    
+]
 
 echo &quot;Running static checks...&quot;
+build job: &apos;clang-format&apos;, parameters: buildParams, wait: true
 
-def result = parallel(clangformat: {
-    build job: &apos;clang-format&apos;, parameters: [[$class: &apos;StringParameterValue&apos;, name: &apos;GITHUB_URL&apos;, value: GITHUB_URL]], wait: true
-}
-, doxygen: {
-    build job: &apos;cppcheck&apos;, parameters: [[$class: &apos;StringParameterValue&apos;, name: &apos;GITHUB_URL&apos;, value: GITHUB_URL]], wait: true
-}, cppcheck: {
-    build job: &apos;doxygen&apos;, parameters: [[$class: &apos;StringParameterValue&apos;, name: &apos;GITHUB_URL&apos;, value: GITHUB_URL]], wait: true
-},
-failFast: false)
+// def result = parallel(clangformat: {
+//     build job: &apos;clang-format&apos;, parameters: [[$class: &apos;StringParameterValue&apos;, name: &apos;GITHUB_URL&apos;, value: GITHUB_URL]], wait: true
+// }
+// , doxygen: {
+//     build job: &apos;cppcheck&apos;, parameters: [[$class: &apos;StringParameterValue&apos;, name: &apos;GITHUB_URL&apos;, value: GITHUB_URL]], wait: true
+// }, cppcheck: {
+//     build job: &apos;doxygen&apos;, parameters: [[$class: &apos;StringParameterValue&apos;, name: &apos;GITHUB_URL&apos;, value: GITHUB_URL]], wait: true
+// },
+// failFast: false)
 
 
 echo &quot;Completed static checks. Proceding to compilation &amp; testing&quot;</script>
