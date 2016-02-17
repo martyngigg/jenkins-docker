@@ -4,7 +4,7 @@
   <description></description>
   <keepDependencies>false</keepDependencies>
   <properties>
-    <com.coravy.hudson.plugins.github.GithubProjectProperty plugin="github@1.17.0">
+    <com.coravy.hudson.plugins.github.GithubProjectProperty plugin="github@1.18-SNAPSHOT">
       <projectUrl>https://github.com/martyngigg/jenkins-github-pr/</projectUrl>
       <displayName>ClangFormat</displayName>
     </com.coravy.hudson.plugins.github.GithubProjectProperty>
@@ -34,22 +34,18 @@
   <triggers/>
   <concurrentBuild>false</concurrentBuild>
   <builders>
-    <com.cloudbees.jenkins.GitHubSetCommitStatusBuilder plugin="github@1.17.0">
-      <statusMessage>
-        <content></content>
-      </statusMessage>
-    </com.cloudbees.jenkins.GitHubSetCommitStatusBuilder>
     <hudson.tasks.Shell>
       <command>sleep 10s
 exit 1</command>
     </hudson.tasks.Shell>
   </builders>
   <publishers>
-    <com.cloudbees.jenkins.GitHubCommitNotifier plugin="github@1.17.0">
+    <com.cloudbees.jenkins.GitHubCommitNotifier plugin="github@1.18-SNAPSHOT">
       <statusMessage>
         <content></content>
       </statusMessage>
       <resultOnFailure>FAILURE</resultOnFailure>
+      <revisionParameter>GITHUB_PR_HEAD_SHA</revisionParameter>
     </com.cloudbees.jenkins.GitHubCommitNotifier>
   </publishers>
   <buildWrappers/>

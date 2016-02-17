@@ -4,17 +4,29 @@
   <description></description>
   <keepDependencies>false</keepDependencies>
   <properties>
-    <hudson.model.ParametersDefinitionProperty>
-      <parameterDefinitions>
-        <hudson.model.StringParameterDefinition>
-          <name>GITHUB_URL</name>
-          <description></description>
-          <defaultValue></defaultValue>
-        </hudson.model.StringParameterDefinition>
-      </parameterDefinitions>
-    </hudson.model.ParametersDefinitionProperty>
+    <com.coravy.hudson.plugins.github.GithubProjectProperty plugin="github@1.18-SNAPSHOT">
+      <projectUrl>https://github.com/martyngigg/jenkins-github-pr/</projectUrl>
+      <displayName>ClangFormat</displayName>
+    </com.coravy.hudson.plugins.github.GithubProjectProperty>
   </properties>
-  <scm class="hudson.scm.NullSCM"/>
+  <scm class="hudson.plugins.git.GitSCM" plugin="git@2.4.1">
+    <configVersion>2</configVersion>
+    <userRemoteConfigs>
+      <hudson.plugins.git.UserRemoteConfig>
+        <name>origin</name>
+        <refspec>+refs/pull/${GITHUB_PR_NUMBER}/merge:refs/remotes/origin/pull/${GITHUB_PR_NUMBER}/merge</refspec>
+        <url>https://github.com/martyngigg/jenkins-github-pr.git</url>
+      </hudson.plugins.git.UserRemoteConfig>
+    </userRemoteConfigs>
+    <branches>
+      <hudson.plugins.git.BranchSpec>
+        <name>origin/pull/${GITHUB_PR_NUMBER}/merge</name>
+      </hudson.plugins.git.BranchSpec>
+    </branches>
+    <doGenerateSubmoduleConfigurations>false</doGenerateSubmoduleConfigurations>
+    <submoduleCfg class="list"/>
+    <extensions/>
+  </scm>
   <canRoam>true</canRoam>
   <disabled>false</disabled>
   <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
@@ -23,9 +35,18 @@
   <concurrentBuild>false</concurrentBuild>
   <builders>
     <hudson.tasks.Shell>
-      <command>sleep 30s</command>
+      <command>sleep 45s
+exit 0</command>
     </hudson.tasks.Shell>
   </builders>
-  <publishers/>
+  <publishers>
+    <com.cloudbees.jenkins.GitHubCommitNotifier plugin="github@1.18-SNAPSHOT">
+      <statusMessage>
+        <content></content>
+      </statusMessage>
+      <resultOnFailure>FAILURE</resultOnFailure>
+      <revisionParameter>GITHUB_PR_HEAD_SHA</revisionParameter>
+    </com.cloudbees.jenkins.GitHubCommitNotifier>
+  </publishers>
   <buildWrappers/>
 </project>

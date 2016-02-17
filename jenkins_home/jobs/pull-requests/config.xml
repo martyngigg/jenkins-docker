@@ -4,7 +4,7 @@
   <description></description>
   <keepDependencies>false</keepDependencies>
   <properties>
-    <com.coravy.hudson.plugins.github.GithubProjectProperty plugin="github@1.17.0">
+    <com.coravy.hudson.plugins.github.GithubProjectProperty plugin="github@1.18-SNAPSHOT">
       <projectUrl>https://github.com/martyngigg/jenkins-github-pr/</projectUrl>
       <displayName></displayName>
     </com.coravy.hudson.plugins.github.GithubProjectProperty>
@@ -32,18 +32,17 @@ def buildParams = [
 ]
 
 echo &quot;Running static checks...&quot;
-build job: &apos;clang-format&apos;, parameters: buildParams, wait: true
+//build job: &apos;clang-format&apos;, parameters: buildParams, wait: true
 
-// def result = parallel(clangformat: {
-//     build job: &apos;clang-format&apos;, parameters: [[$class: &apos;StringParameterValue&apos;, name: &apos;GITHUB_URL&apos;, value: GITHUB_URL]], wait: true
-// }
-// , doxygen: {
-//     build job: &apos;cppcheck&apos;, parameters: [[$class: &apos;StringParameterValue&apos;, name: &apos;GITHUB_URL&apos;, value: GITHUB_URL]], wait: true
-// }, cppcheck: {
-//     build job: &apos;doxygen&apos;, parameters: [[$class: &apos;StringParameterValue&apos;, name: &apos;GITHUB_URL&apos;, value: GITHUB_URL]], wait: true
-// },
-// failFast: false)
-
+def result = parallel(clangformat: {
+ build job: &apos;clang-format&apos;, parameters: [[$class: &apos;StringParameterValue&apos;, name: &apos;GITHUB_URL&apos;, value: GITHUB_URL]], wait: true
+}
+, doxygen: {
+ build job: &apos;cppcheck&apos;, parameters: [[$class: &apos;StringParameterValue&apos;, name: &apos;GITHUB_URL&apos;, value: GITHUB_URL]], wait: true
+}, cppcheck: {
+ build job: &apos;doxygen&apos;, parameters: [[$class: &apos;StringParameterValue&apos;, name: &apos;GITHUB_URL&apos;, value: GITHUB_URL]], wait: true
+},
+failFast: false)
 
 echo &quot;Completed static checks. Proceding to compilation &amp; testing&quot;</script>
     <sandbox>false</sandbox>
