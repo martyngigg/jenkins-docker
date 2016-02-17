@@ -6,7 +6,7 @@
   <properties>
     <com.coravy.hudson.plugins.github.GithubProjectProperty plugin="github@1.18-SNAPSHOT">
       <projectUrl>https://github.com/martyngigg/jenkins-github-pr/</projectUrl>
-      <displayName>ClangFormat</displayName>
+      <displayName>Doxygen</displayName>
     </com.coravy.hudson.plugins.github.GithubProjectProperty>
   </properties>
   <scm class="hudson.plugins.git.GitSCM" plugin="git@2.4.1">
@@ -34,6 +34,12 @@
   <triggers/>
   <concurrentBuild>false</concurrentBuild>
   <builders>
+    <com.cloudbees.jenkins.GitHubSetCommitStatusBuilder plugin="github@1.18-SNAPSHOT">
+      <statusMessage>
+        <content></content>
+      </statusMessage>
+      <revisionParameter>GITHUB_PR_HEAD_SHA</revisionParameter>
+    </com.cloudbees.jenkins.GitHubSetCommitStatusBuilder>
     <hudson.tasks.Shell>
       <command>sleep 45s
 exit 0</command>

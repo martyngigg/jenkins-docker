@@ -38,6 +38,12 @@
       <command>sleep 10s
 exit 1</command>
     </hudson.tasks.Shell>
+    <com.cloudbees.jenkins.GitHubSetCommitStatusBuilder plugin="github@1.18-SNAPSHOT">
+      <statusMessage>
+        <content></content>
+      </statusMessage>
+      <revisionParameter>GITHUB_PR_HEAD_SHA</revisionParameter>
+    </com.cloudbees.jenkins.GitHubSetCommitStatusBuilder>
   </builders>
   <publishers>
     <com.cloudbees.jenkins.GitHubCommitNotifier plugin="github@1.18-SNAPSHOT">
