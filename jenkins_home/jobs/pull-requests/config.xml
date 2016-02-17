@@ -14,9 +14,7 @@
     </com.sonyericsson.rebuild.RebuildSettings>
   </properties>
   <definition class="org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition" plugin="workflow-cps@1.13">
-    <script>echo &quot;Starting checks for pull request &quot;
-
-def buildParams = [
+    <script>def buildParams = [
     [$class: &apos;StringParameterValue&apos;, name: &apos;GITHUB_PR_TRIGGER_SENDER_AUTHOR&apos;, value: GITHUB_PR_TRIGGER_SENDER_AUTHOR],
     [$class: &apos;StringParameterValue&apos;, name: &apos;GITHUB_PR_TRIGGER_SENDER_EMAIL&apos;, value: GITHUB_PR_TRIGGER_SENDER_EMAIL],
     [$class: &apos;StringParameterValue&apos;, name: &apos;GITHUB_PR_COMMIT_AUTHOR_NAME&apos;, value: GITHUB_PR_COMMIT_AUTHOR_NAME],
@@ -35,20 +33,56 @@ def buildParams = [
     
 ]
 
-echo &quot;Running static checks...&quot;
-//build job: &apos;clang-format&apos;, parameters: buildParams, wait: true
-
-def result = parallel(clangformat: {
- build job: &apos;clang-format&apos;, parameters: buildParams, wait: true
+echo &quot;Beginning static checks...&quot;
+def passedClangFormat, passedDoxygen, passedCppcheck
+parallel (clangformat: {
+  try {
+    build job: &apos;clang-format&apos;, parameters: buildParams, wait: true
+    passedClangFormat = true 
+  } catch(x) {
+    passedClangFormat = false 
+  }
 }
 , doxygen: {
- build job: &apos;cppcheck&apos;, parameters: buildParams, wait: true
+  try {
+    build job: &apos;doxygen&apos;, parameters: buildParams, wait: true
+    passedDoxygen = true
+  } catch(x) {
+    passedDoxygen = false
+  }
 }, cppcheck: {
- build job: &apos;doxygen&apos;, parameters: buildParams, wait: true
+  try {
+    build job: &apos;cppcheck&apos;, parameters: buildParams, wait: true
+    passedCppcheck = true
+  } catch(x) {
+    passedCppcheck = false
+  }
 },
 failFast: false)
 
-echo &quot;Completed static checks. Proceding to compilation &amp; testing&quot;</script>
+def allPassed = passedClangFormat &amp;&amp; passedDoxygen &amp;&amp; passedCppcheck;
+if (allPassed) {
+  echo &apos;All static checks have passed. Moving on to build+test phase&apos;
+} else {
+  error &apos;One or more static checks have failed. Exiting pipeline with error&apos;
+}
+
+def passedRHEL7
+parallel(rhel7: {
+  try {
+    build job: &apos;rhel7&apos;, parameters: buildParams, wait: true
+    passedRHEL7 = true
+  } catch(x) {
+    passedRHEL7 = false
+  }
+},
+failFast: false)
+
+allPassed = passedRHEL7
+if(!allPassed) {
+  error &apos;One or more OS builds have failed. Exiting pipeline with error&apos;
+}
+</script>
     <sandbox>false</sandbox>
   </definition>
   <triggers>
@@ -60,7 +94,7 @@ echo &quot;Completed static checks. Proceding to compilation &amp; testing&quot;
       </events>
       <preStatus>false</preStatus>
       <cancelQueued>false</cancelQueued>
-      <skipFirstRun>true</skipFirstRun>
+      <skipFirstRun>false</skipFirstRun>
     </org.jenkinsci.plugins.github.pullrequest.GitHubPRTrigger>
   </triggers>
   <concurrentBuild>false</concurrentBuild>

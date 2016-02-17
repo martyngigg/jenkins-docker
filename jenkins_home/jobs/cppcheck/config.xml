@@ -45,7 +45,7 @@
       <revisionParameter>GITHUB_PR_HEAD_SHA</revisionParameter>
     </com.cloudbees.jenkins.GitHubSetCommitStatusBuilder>
     <hudson.tasks.Shell>
-      <command>sleep 60s
+      <command>sleep 30s
 exit 0</command>
     </hudson.tasks.Shell>
   </builders>
